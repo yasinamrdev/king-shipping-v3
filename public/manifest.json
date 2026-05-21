@@ -1,0 +1,16 @@
+{
+  "name": "كينج شيبنج | King Shipping",
+  "short_name": "كينج شيبنج",
+  "description": "شحن سريع وآمن لجميع محافظات مصر",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0a1628",
+  "theme_color": "#0a1628",
+  "orientation": "portrait",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    { "src": "/icons/icon-192.svg", "type": "image/svg+xml", "sizes": "192x192", "purpose": "any maskable" },
+    { "src": "/icons/icon-512.svg", "type": "image/svg+xml", "sizes": "512x512", "purpose": "any maskable" }
+  ]
+}

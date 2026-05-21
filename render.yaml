@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: king-shipping
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PORT
+        value: 10000
+    healthCheckPath: /api/routes
+    autoDeploy: true

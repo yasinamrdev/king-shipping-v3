@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة المندوب | كينج شيبنج</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a1628">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #0a1628;
+            --navy-mid: #0f2044;
+            --navy-light: #1a2d50;
+            --blue: #1a3a6b;
+            --blue-light: #3b82f6;
+            --gold: #f5a623;
+            --gold-dark: #d48a10;
+            --gold-pale: #fff5dc;
+            --white: #fff;
+            --gray-light: #f4f6fb;
+            --gray: #8a97b0;
+            --text: #1c2b4b;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --radius: 14px;
+            --radius-sm: 10px;
+            --shadow-card: 0 4px 20px rgba(10,22,40,0.08);
+            --shadow-lg: 0 12px 40px rgba(10,22,40,0.15);
+            --font: 'Cairo', 'Tajawal', sans-serif;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            margin: 0;
+            font-family: var(--font);
+            background: linear-gradient(160deg, #f0f4ff 0%, #f8fafc 50%, #eef2ff 100%);
+            min-height: 100vh;
+        }
+        .courier-app {
+            max-width: 520px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 0 60px rgba(10,22,40,0.06);
+            position: relative;
+        }
+        .app-header {
+            background: linear-gradient(135deg, #0a1628 0%, #0f2044 40%, #1a3a6b 100%);
+            color: white;
+            padding: 24px 24px 18px;
+            position: relative;
+            overflow: hidden;
+        }
+        .app-header::after {
+            content: '';
+            position: absolute;
+            top: -60%;
+            left: -20%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(245,166,35,0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .app-header::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(245,166,35,0.3), transparent);
+        }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header-title h2 {
+            margin: 0;
+            font-size: 1.15rem;
+            font-weight: 900;
+        }
+        .header-logo {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(245,166,35,0.3);
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .logout-btn {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.8);
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: var(--font);
+            font-size: 0.78rem;
+            font-weight: 600;
+            transition: all 0.25s;
+        }
+        .logout-btn:hover {
+            background: rgba(239,68,68,0.2);
+            border-color: rgba(239,68,68,0.3);
+            color: #fca5a5;
+        }
+        .snd-btn { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); width: 34px; height: 34px; border-radius: 50%; cursor: pointer; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; transition: all 0.25s; flex-shrink: 0; }
+        .snd-btn:hover { background: rgba(245,166,35,0.12); border-color: rgba(245,166,35,0.2); color: var(--gold); }
+        .snd-btn.muted { opacity: 0.4; }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 4px 12px 4px 8px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            position: relative;
+            z-index: 1;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            position: relative;
+        }
+        .status-dot.available {
+            background: var(--success);
+            box-shadow: 0 0 8px rgba(34,197,94,0.5);
+        }
+        .status-dot.available::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            background: rgba(34,197,94,0.2);
+            animation: pulse-dot 2s infinite;
+        }
+        .status-dot.busy {
+            background: var(--warning);
+            box-shadow: 0 0 8px rgba(245,158,11,0.5);
+        }
+        .status-dot.busy::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            background: rgba(245,158,11,0.2);
+            animation: pulse-dot 2s infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.8); opacity: 0; }
+        }
+        #statusText { color: rgba(255,255,255,0.7); }
+
+        .tabs {
+            display: flex;
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            margin: 0 16px;
+            margin-top: -12px;
+            border-radius: 12px;
+            padding: 4px;
+            box-shadow: 0 4px 20px rgba(10,22,40,0.06);
+            position: relative;
+            z-index: 2;
+        }
+        .tab {
+            flex: 1;
+            padding: 10px 8px;
+            text-align: center;
+            background: none;
+            border: none;
+            font-family: var(--font);
+            font-weight: 700;
+            font-size: 0.78rem;
+            cursor: pointer;
+            color: var(--gray);
+            border-radius: 9px;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+        .tab.active {
+            color: var(--navy);
+            background: white;
+            box-shadow: 0 2px 10px rgba(10,22,40,0.08);
+        }
+        .tab:hover:not(.active) { color: var(--navy-light); }
+        .badge-notif {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: var(--danger);
+            color: white;
+            font-size: 0.58rem;
+            font-weight: 900;
+            padding: 2px 5px;
+            border-radius: 8px;
+            min-width: 16px;
+            text-align: center;
+            line-height: 1.3;
+            box-shadow: 0 2px 8px rgba(239,68,68,0.3);
+            animation: badge-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes badge-pop {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        #content {
+            padding: 8px 0 20px;
+            min-height: 50vh;
+        }
+        .shipment-card {
+            margin: 10px 16px;
+            padding: 18px;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-card);
+            border: 1px solid rgba(255,255,255,0.8);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: card-in 0.4s ease both;
+        }
+        .shipment-card:nth-child(1) { animation-delay: 0s; }
+        .shipment-card:nth-child(2) { animation-delay: 0.06s; }
+        .shipment-card:nth-child(3) { animation-delay: 0.12s; }
+        .shipment-card:nth-child(4) { animation-delay: 0.18s; }
+        .shipment-card:nth-child(5) { animation-delay: 0.24s; }
+        .shipment-card:nth-child(6) { animation-delay: 0.3s; }
+        .shipment-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(10,22,40,0.1);
+            border-color: rgba(59,130,246,0.15);
+        }
+        @keyframes card-in {
+            from { opacity: 0; transform: translateY(16px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .tracking {
+            font-weight: 900;
+            color: var(--navy);
+            font-size: 0.95rem;
+        }
+        .status-chip {
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+        .status-chip.new { background: #eff6ff; color: var(--blue-light); }
+        .status-chip.transit { background: #fef3c7; color: #92400e; }
+        .status-chip.done { background: #dcfce7; color: #166534; }
+        .status-chip.rejected { background: #fee2e2; color: #991b1b; }
+        .card-body {
+            font-size: 0.82rem;
+            color: var(--text);
+            line-height: 1.7;
+        }
+        .card-body .row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .card-body .icon { opacity: 0.6; }
+        .card-meta {
+            margin-top: 8px;
+            padding-top: 10px;
+            border-top: 1px solid var(--gray-light);
+            color: var(--gray);
+            font-size: 0.75rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .action-btns {
+            display: flex;
+            gap: 8px;
+            margin-top: 14px;
+        }
+        .btn-action {
+            flex: 1;
+            padding: 11px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: var(--font);
+            font-weight: 700;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .btn-action:active { transform: scale(0.96); }
+        .btn-transit {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #78350f;
+            box-shadow: 0 2px 8px rgba(245,158,11,0.15);
+        }
+        .btn-transit:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(245,158,11,0.25); }
+        .btn-done {
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+            color: #14532d;
+            box-shadow: 0 2px 8px rgba(34,197,94,0.15);
+        }
+        .btn-done:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(34,197,94,0.25); }
+        .btn-reject {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #7f1d1d;
+            box-shadow: 0 2px 8px rgba(239,68,68,0.1);
+        }
+        .btn-reject:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(239,68,68,0.2); }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px 60px;
+            color: var(--gray);
+        }
+        .empty-state .icon-wrap {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 16px;
+            background: linear-gradient(135deg, rgba(59,130,246,0.08), rgba(245,166,35,0.08));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+        }
+        .empty-state h3 { color: var(--navy); font-size: 1rem; margin-bottom: 6px; }
+        .empty-state p { font-size: 0.82rem; opacity: 0.7; }
+
+        .notification-item {
+            margin: 8px 16px;
+            padding: 14px 16px;
+            border-radius: var(--radius-sm);
+            background: white;
+            border: 1px solid rgba(59,130,246,0.1);
+            box-shadow: var(--shadow-card);
+            transition: all 0.25s;
+            animation: card-in 0.35s ease both;
+        }
+        .notification-item:hover { border-color: rgba(59,130,246,0.2); }
+        .notification-item .msg {
+            font-size: 0.85rem;
+            color: var(--text);
+            line-height: 1.6;
+        }
+        .notification-item .time {
+            font-size: 0.7rem;
+            color: var(--gray);
+            margin-top: 6px;
+        }
+        .notification-item .notif-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--blue-light);
+            margin-left: 8px;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            right: 16px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+            max-width: 488px;
+            margin: 0 auto;
+        }
+        .toast {
+            background: rgba(10,22,40,0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            color: white;
+            padding: 14px 16px;
+            border-radius: 12px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: toast-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: auto;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .toast .icon { font-size: 1.3rem; flex-shrink: 0; }
+        .toast .content { flex: 1; min-width: 0; }
+        .toast .title { font-weight: 900; font-size: 0.85rem; }
+        .toast .desc { font-size: 0.75rem; opacity: 0.75; margin-top: 2px; }
+        .toast .close-btn {
+            background: rgba(255,255,255,0.06);
+            border: none;
+            color: rgba(255,255,255,0.6);
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .toast .close-btn:hover { background: rgba(255,255,255,0.12); color: white; }
+        @keyframes toast-in {
+            0% { opacity: 0; transform: translateY(-20px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes toast-out {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-10px) scale(0.95); }
+        }
+
+        .tab-transition {
+            animation: tab-fade 0.3s ease;
+        }
+        @keyframes tab-fade {
+            0% { opacity: 0.5; transform: translateY(6px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59,130,246,0.1), transparent);
+            margin: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="toast-container" id="toastContainer"></div>
+    <div class="courier-app">
+        <div class="app-header">
+            <div class="header-top">
+                <div class="header-title">
+                    <div class="header-logo">🛵</div>
+                    <div>
+                        <h2 id="courierName">المندوب</h2>
+                        <div class="status-badge">
+                            <span class="status-dot available" id="statusDot"></span>
+                            <span id="statusText">متاح</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="snd-btn" id="soundToggle" onclick="SoundManager.toggle();this.classList.toggle('muted');" title="الصوت">🔊</button>
+                    <button class="logout-btn" onclick="logout()">🚪 خروج</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="new">
+                <span>🆕</span> الجديدة
+            </button>
+            <button class="tab" data-tab="transit">
+                <span>🛵</span> جارية
+            </button>
+            <button class="tab" data-tab="done">
+                <span>✅</span> تمت
+            </button>
+            <button class="tab" data-tab="notifications">
+                <span>🔔</span> الإشعارات
+                <span class="badge-notif" id="notifBadge" style="display:none;">0</span>
+            </button>
+        </div>
+
+        <div id="content"></div>
+    </div>
+
+    <script src="js/sound.js"></script>
+    <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');</script>
+    <script>
+        var token = localStorage.getItem('courierToken');
+        var courierData = JSON.parse(localStorage.getItem('courierData') || '{}');
+        if (!token) window.location.href = 'courier-login';
+        document.getElementById('courierName').textContent = courierData.name || 'المندوب';
+        var currentTab = 'new', lastContent = '';
+
+        function showToast(title, desc, icon) {
+            var container = document.getElementById('toastContainer');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toastContainer';
+                container.style.cssText = 'position:fixed;top:16px;left:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;max-width:488px;margin:0 auto;';
+                document.body.appendChild(container);
+            }
+            var toast = document.createElement('div');
+            toast.style.cssText = 'background:rgba(10,22,40,0.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:white;padding:14px 16px;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,0.25);display:flex;align-items:center;gap:12px;pointer-events:auto;cursor:pointer;border:1px solid rgba(255,255,255,0.06);';
+            toast.innerHTML = '<span style="font-size:1.3rem;flex-shrink:0;">' + (icon || '🔔') + '</span><div style="flex:1;min-width:0;"><div style="font-weight:900;font-size:0.85rem;">' + title + '</div><div style="font-size:0.75rem;opacity:0.75;margin-top:2px;">' + desc + '</div></div><button style="background:rgba(255,255,255,0.06);border:none;color:rgba(255,255,255,0.6);width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:0.85rem;flex-shrink:0;display:flex;align-items:center;justify-content:center;" onclick="this.parentElement.remove()">✕</button>';
+            container.appendChild(toast);
+            var timer = setTimeout(function() {
+                if (toast.parentElement) { toast.style.animation = 'toast-out 0.35s ease forwards'; setTimeout(function() { if (toast.parentElement) toast.remove(); }, 350); }
+            }, 5000);
+            toast.addEventListener('click', function(e) { if (e.target === toast || e.target === toast.querySelector('.content') || e.target === toast.querySelector('.title') || e.target === toast.querySelector('.desc') || e.target === toast.querySelector('.icon')) { clearTimeout(timer); toast.style.animation = 'toast-out 0.35s ease forwards'; setTimeout(function() { if (toast.parentElement) toast.remove(); }, 350); } });
+        }
+
+        async function api(url, options) {
+            options = options || {};
+            var headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token };
+            if (options.headers) { for (var k in options.headers) headers[k] = options.headers[k]; }
+            var response = await fetch(url, { method: options.method || 'GET', headers: headers, body: options.body });
+            if (response.status === 401 || response.status === 403) { localStorage.clear(); window.location.href = 'courier-login'; return; }
+            return response.json();
+        }
+
+        document.querySelectorAll('.tab').forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+                this.classList.add('active');
+                currentTab = this.dataset.tab;
+                if (currentTab === 'notifications') loadNotifications();
+                else loadShipments(currentTab);
+            });
+        });
+
+        async function checkNewNotifications() {
+            try {
+                var data = await api('/api/courier/notifications');
+                var notifications = data.data || [];
+                var unread = notifications.filter(function(n) { return !n.is_read; });
+                if (unread.length > 0) {
+                    var badge = document.getElementById('notifBadge');
+                    badge.style.display = 'inline';
+                    badge.textContent = unread.length;
+                    showToast('🔔 إشعار جديد', unread[0].message, '📦');
+                    if (typeof SoundManager !== 'undefined') SoundManager.notification();
+                }
+            } catch (err) {}
+        }
+
+        async function loadShipments(status) {
+            try {
+                var data = await api('/api/courier/my-shipments?status=' + status);
+                var shipments = data.data || [];
+                var sl = { new: 'جديدة', transit: 'قيد التوصيل', done: 'تم التسليم', rejected: 'مرفوضة' };
+                var sc = { new: 'new', transit: 'transit', done: 'done', rejected: 'rejected' };
+                var newContent = shipments.length === 0
+                    ? '<div class="empty-state"><div class="icon-wrap">📭</div><h3>لا توجد شحنات</h3><p>سيتم إعلامك عند وصول شحنات جديدة</p></div>'
+                    : shipments.map(function(s) {
+                        var actions = '';
+                        if (s.status === 'new') actions = '<div class="action-btns"><button class="btn-action btn-transit" onclick="updateStatus(' + s.id + ', \'transit\')">🛵 بدء التوصيل</button><button class="btn-action btn-reject" onclick="updateStatus(' + s.id + ', \'rejected\')">❌ رفض</button></div>';
+                        else if (s.status === 'transit') actions = '<div class="action-btns"><button class="btn-action btn-done" onclick="updateStatus(' + s.id + ', \'done\')">✅ تأكيد التسليم</button><button class="btn-action btn-reject" onclick="updateStatus(' + s.id + ', \'rejected\')">❌ تعذر التسليم</button></div>';
+                        return '<div class="shipment-card"><div class="card-header"><span class="tracking">📦 ' + s.tracking_number + '</span><span class="status-chip ' + (sc[s.status] || 'new') + '">' + sl[s.status] + '</span></div><div class="card-body"><div class="row"><span class="icon">👤</span> من: ' + s.sender_name + ' — ' + s.sender_phone + '</div><div class="row"><span class="icon">👤</span> إلى: ' + s.customer_name + ' — ' + s.customer_phone + '</div><div class="card-meta"><span>📍 ' + (s.route_name || '-') + '</span><span>🏠 ' + (s.customer_address || '-') + '</span><span>⚖️ ' + (s.weight || 1) + ' كجم</span></div>' + actions + '</div></div>';
+                    }).join('');
+                if (newContent !== lastContent) {
+                    document.getElementById('content').innerHTML = newContent;
+                    document.getElementById('content').className = 'tab-transition';
+                    lastContent = newContent;
+                }
+                updateCourierStatusUI();
+            } catch (err) {}
+        }
+
+        async function updateCourierStatusUI() {
+            try {
+                var newData = await api('/api/courier/my-shipments?status=new');
+                var newShipments = newData.data || [];
+                var transitData = await api('/api/courier/my-shipments?status=transit');
+                var transitShipments = transitData.data || [];
+                var dot = document.getElementById('statusDot');
+                var text = document.getElementById('statusText');
+                if (newShipments.length > 0) {
+                    dot.className = 'status-dot busy';
+                    text.textContent = 'مشغول — ' + newShipments.length + ' شحنات جديدة';
+                } else if (transitShipments.length > 0) {
+                    dot.className = 'status-dot busy';
+                    text.textContent = 'مشغول — ' + transitShipments.length + ' شحنات جارية';
+                } else {
+                    dot.className = 'status-dot available';
+                    text.textContent = 'متاح';
+                }
+            } catch (err) {}
+        }
+
+        async function loadNotifications() {
+            try {
+                var data = await api('/api/courier/notifications');
+                var notifications = data.data || [];
+                lastContent = '';
+                var html = notifications.length === 0
+                    ? '<div class="empty-state"><div class="icon-wrap">🔔</div><h3>لا توجد إشعارات</h3><p>كل الإشعارات هتظهر هنا</p></div>'
+                    : notifications.map(function(n) {
+                        return '<div class="notification-item"><div class="msg"><span class="notif-dot"></span>' + n.message + '</div><div class="time">' + new Date(n.created_at).toLocaleString('ar-EG') + '</div></div>';
+                    }).join('');
+                document.getElementById('content').innerHTML = html;
+                document.getElementById('content').className = 'tab-transition';
+                document.getElementById('notifBadge').style.display = 'none';
+            } catch (err) {}
+        }
+
+        async function updateStatus(id, status) {
+            await api('/api/courier/shipments/' + id + '/status', { method: 'PATCH', body: JSON.stringify({ status: status }) });
+            lastContent = '';
+            loadShipments(currentTab);
+            updateCourierStatusUI();
+            if (typeof SoundManager !== 'undefined') SoundManager.success();
+            if (status === 'transit') showToast('🛵 بدء التوصيل', 'أنت الآن مشغول', '🛵');
+            if (status === 'done') showToast('✅ تم التسليم', 'أصبحت متاح مرة أخرى', '✅');
+            if (status === 'rejected') showToast('❌ تم الرفض', 'أصبحت متاح مرة أخرى', '❌');
+        }
+
+        function logout() { localStorage.clear(); window.location.href = 'courier-login'; }
+
+        loadShipments('new');
+        updateCourierStatusUI();
+        document.getElementById('statusDot').className = 'status-dot ' + (courierData.status || 'available');
+        document.getElementById('statusText').textContent = courierData.status === 'busy' ? 'مشغول' : 'متاح';
+
+        setInterval(function() { if (currentTab !== 'notifications') loadShipments(currentTab); }, 3000);
+        setInterval(checkNewNotifications, 5000);
+        setInterval(updateCourierStatusUI, 5000);
+    </script>
+</body>
+</html>

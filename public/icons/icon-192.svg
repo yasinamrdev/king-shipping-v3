@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <rect width="192" height="192" rx="32" fill="#0a1628"/>
+  <circle cx="96" cy="76" r="36" fill="#f5a623"/>
+  <path d="M58 112 L96 140 L134 112" stroke="#f5a623" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="30" y="124" width="132" height="44" rx="10" fill="#1a3a6b"/>
+  <text x="96" y="153" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#f5a623" text-anchor="middle">KS</text>
+</svg>

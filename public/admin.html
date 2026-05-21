@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم | كينج شيبنج</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a1628">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --navy: #0a1628; --navy-mid: #0f2044; --navy-light: #1a2d50; --blue: #1a3a6b; --blue-light: #3b82f6; --gold: #f5a623; --gold-pale: #fff5dc; --white: #fff; --gray-light: #f4f6fb; --gray-mid: #e2e8f0; --gray: #8a97b0; --gray-dark: #64748b; --text: #1c2b4b; --danger: #ef4444; --success: #22c55e; --warning: #f59e0b; --shadow: 0 8px 32px rgba(10,22,40,0.1); --radius: 12px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Cairo', 'Tajawal', sans-serif; background: #eff6ff; direction: rtl; }
+        .sidebar { position: fixed; top: 0; right: 0; bottom: 0; width: 260px; background: linear-gradient(180deg, var(--navy), var(--navy-mid), var(--blue)); color: white; z-index: 100; display: flex; flex-direction: column; padding: 24px 0; overflow-y: auto; }
+        .sidebar-logo { padding: 0 24px 24px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 24px; }
+        .sidebar-logo h2 { font-size: 1.3rem; font-weight: 900; }
+        .sidebar-logo span { color: var(--gold); font-size: 0.72rem; letter-spacing: 2px; }
+        .sidebar-nav { flex: 1; padding: 0 12px; }
+        .sidebar-nav button { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 16px; background: none; border: none; color: rgba(255,255,255,0.6); border-radius: 10px; margin-bottom: 4px; font-family: 'Cairo', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; text-align: right; transition: all 0.2s; }
+        .sidebar-nav button:hover, .sidebar-nav button.active { background: rgba(59,130,246,0.15); color: #60a5fa; }
+        .sidebar-footer { padding: 16px 24px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .sidebar-footer button { width: 100%; background: rgba(255,255,255,0.1); color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-family: 'Cairo', sans-serif; font-weight: 600; }
+        .sidebar-footer button:hover { background: rgba(229,62,62,0.3); color: #fca5a5; }
+        .main-content { margin-right: 260px; padding: 24px; min-height: 100vh; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; flex-wrap: wrap; gap: 12px; }
+        .top-bar h1 { font-size: 1.5rem; font-weight: 900; color: var(--navy); }
+        .top-bar .admin-info { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--navy); }
+    .sound-toggle { background: none; border: 1px solid var(--gray-mid); color: var(--gray-dark); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1rem; display: inline-flex; align-items: center; justify-content: center; transition: all 0.25s; flex-shrink: 0; }
+    .sound-toggle:hover { border-color: var(--gold); background: var(--gold-pale); }
+    .sound-toggle.muted { opacity: 0.5; }
+        .notif-icon { position: relative; cursor: pointer; font-size: 1.5rem; }
+        .notif-badge { position: absolute; top: -8px; right: -8px; background: #e53e3e; color: white; font-size: 0.6rem; padding: 2px 6px; border-radius: 10px; display: none; min-width: 18px; text-align: center; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 32px; }
+        .stat-card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+        .stat-card-label { font-size: 0.78rem; color: var(--gray); font-weight: 600; }
+        .stat-card-value { font-size: 1.6rem; font-weight: 900; color: var(--navy); margin: 6px 0; }
+        .panel { background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); overflow: hidden; margin-bottom: 24px; }
+        .panel-header { padding: 20px 24px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .panel-header h3 { font-size: 1.05rem; font-weight: 800; color: var(--navy); }
+    .toast-container { position: fixed; top: 84px; left: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+    .toast { background: #0a1628; color: white; padding: 16px 20px; border-radius: 14px; box-shadow: 0 12px 40px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 14px; animation: slideIn 0.4s ease; pointer-events: auto; cursor: pointer; border-right: 4px solid #f5a623; max-width: 420px; }
+    .toast .icon { font-size: 1.5rem; }
+    .toast .content { flex: 1; }
+    .toast .title { font-weight: 900; font-size: 0.9rem; }
+    .toast .desc { font-size: 0.8rem; opacity: 0.7; margin-top: 2px; }
+    .toast .close { background: rgba(255,255,255,0.1); border: none; color: white; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        .search-input { border: 2px solid var(--gray-mid); border-radius: 10px; padding: 10px 16px; font-family: 'Cairo', 'Tajawal', sans-serif; min-width: 200px; outline: none; transition: all 0.2s; }
+        .search-input:focus { border-color: var(--blue-light); box-shadow: 0 0 0 4px rgba(59,130,246,0.1); }
+        .btn { padding: 10px 18px; border-radius: 10px; font-family: 'Cairo', 'Tajawal', sans-serif; font-weight: 700; font-size: 0.85rem; cursor: pointer; border: none; transition: all 0.2s; white-space: nowrap; }
+        .btn-primary { background: linear-gradient(135deg, var(--blue-light), var(--blue)); color: white; }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(59,130,246,0.3); }
+        .btn-xs { padding: 6px 12px; border-radius: 6px; font-family: 'Cairo', 'Tajawal', sans-serif; font-size: 0.73rem; font-weight: 700; cursor: pointer; border: none; transition: all 0.15s; white-space: nowrap; }
+        .btn-edit { background: #dbeafe; color: #1e40af; }
+        .btn-delete { background: #fee2e2; color: #991b1b; }
+        .btn-convert { background: #dcfce7; color: #166534; }
+        .btn-approve { background: #dcfce7; color: #166534; }
+        .btn-reject { background: #fee2e2; color: #991b1b; }
+        .btn-print { background: #f3e8ff; color: #6b21a8; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        th { background: var(--gray-light); padding: 12px 14px; font-size: 0.8rem; font-weight: 700; color: var(--navy); text-align: right; white-space: nowrap; }
+        td { padding: 12px 14px; font-size: 0.85rem; border-bottom: 1px solid #f1f5f9; }
+        tbody tr:hover { background: #eff6ff; }
+        tfoot td { font-weight: 900; background: #f4f6fb; }
+        .badge { padding: 5px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 700; display: inline-block; white-space: nowrap; }
+        .badge-new { background: #dbeafe; color: #1e40af; }
+        .badge-transit { background: #fef3c7; color: #92400e; }
+        .badge-done { background: #dcfce7; color: #166534; }
+        .badge-rejected { background: #fee2e2; color: #991b1b; }
+        .badge-available { background: #dcfce7; color: #166534; }
+        .badge-busy { background: #fef3c7; color: #92400e; }
+        .badge-pending { background: #fef3c7; color: #92400e; }
+        .badge-approved { background: #dcfce7; color: #166534; }
+        .badge-received { background: #dbeafe; color: #1e40af; }
+        .badge-active { background: #dcfce7; color: #166534; }
+        .badge-inactive { background: #fee2e2; color: #991b1b; }
+        .actions { display: flex; gap: 4px; flex-wrap: wrap; }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--gray); }
+        .section-hidden { display: none; }
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(10,22,40,0.7); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
+        .modal-overlay.show { display: flex; }
+        .modal { background: white; border-radius: 20px; width: 100%; max-width: 650px; padding: 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; }
+        .modal h3 { font-size: 1.2rem; font-weight: 800; color: var(--navy); margin-bottom: 24px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; border: 2px solid #e2e8f0; border-radius: 10px; padding: 11px 14px; font-family: 'Cairo', sans-serif; font-size: 0.9rem; outline: none; transition: border-color 0.2s; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--gold); }
+        .btn-submit { width: 100%; background: linear-gradient(135deg, var(--blue-light), var(--blue)); color: white; border: none; padding: 13px; border-radius: 10px; font-family: 'Cairo', 'Tajawal', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(59,130,246,0.3); }
+        @media (max-width: 768px) { .sidebar { display: none; } .main-content { margin-right: 0; } .form-row { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: 1fr 1fr; } }
+    </style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo"><h2>👑 كينج شيبنج</h2><span>KING SHIPPING</span></div>
+    <nav class="sidebar-nav">
+        <button class="active" data-section="dashboard">📊 نظرة عامة</button>
+        <button data-section="shipments">📦 الشحنات</button>
+        <button data-section="couriers">🛵 المناديب</button>
+        <button data-section="routes">🛣️ الخطوط</button>
+        <button data-section="routes-report">📈 تقرير الخطوط</button>
+        <button data-section="messages">💬 رسائل العملاء</button>
+        <button data-section="returns">🔄 المرتجعات</button>
+        <button data-section="commission">💎 نسبة الربح</button>
+        <button data-section="payouts">💰 المدفوعات</button>
+    </nav>
+    <div class="sidebar-footer"><button onclick="logout()">🚪 تسجيل الخروج</button></div>
+</aside>
+
+<main class="main-content">
+    <div class="top-bar">
+        <h1 id="pageTitle">📊 نظرة عامة</h1>
+        <div class="admin-info">
+            <span class="notif-icon" onclick="showNotifications()" title="الإشعارات">🔔 <span class="notif-badge" id="notifBadge">0</span></span>
+            <button class="sound-toggle" id="soundToggle" onclick="SoundManager.toggle();this.classList.toggle('muted');" title="الصوت">🔊</button>
+            👤 <span id="adminName">المدير</span>
+        </div>
+    </div>
+
+    <section id="section-dashboard">
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-card-label">📦 إجمالي الشحنات</div><div class="stat-card-value" id="statTotal">0</div></div>
+            <div class="stat-card"><div class="stat-card-label">🛵 قيد التوصيل</div><div class="stat-card-value" id="statTransit" style="color:#f59e0b;">0</div></div>
+            <div class="stat-card"><div class="stat-card-label">✅ تم التسليم</div><div class="stat-card-value" id="statDone" style="color:#22c55e;">0</div></div>
+            <div class="stat-card"><div class="stat-card-label">❌ مرفوضة</div><div class="stat-card-value" id="statRejected" style="color:#e53e3e;">0</div></div>
+            <div class="stat-card"><div class="stat-card-label">💰 صافي الربح</div><div class="stat-card-value" id="statProfit" style="color:#22c55e;">0 ج</div></div>
+            <div class="stat-card"><div class="stat-card-label">💎 العمولة</div><div class="stat-card-value" id="statCommission" style="color:#f59e0b;">0 ج</div></div>
+        </div>
+        <div class="panel"><div class="panel-header"><h3>آخر الشحنات</h3></div><div class="table-wrap"><table><thead><tr><th>رقم الشحنة</th><th>المرسل</th><th>المستلم</th><th>الخط</th><th>الحالة</th><th>السعر</th><th>الربح</th></tr></thead><tbody id="dashboardTable"></tbody></table></div></div>
+    </section>
+
+    <section id="section-shipments" class="section-hidden">
+        <div class="panel"><div class="panel-header"><h3>📦 إدارة الشحنات</h3><div class="toolbar"><input type="text" class="search-input" id="searchShipment" placeholder="🔍 بحث..."><button class="btn btn-primary" onclick="openShipmentModal()">+ إضافة شحنة</button></div></div>
+        <div class="table-wrap"><table><thead><tr><th>رقم الشحنة</th><th>المرسل</th><th>المستلم</th><th>الخط</th><th>الوزن</th><th>السعر</th><th>الربح</th><th>الحالة</th><th>المندوب</th><th>إجراءات</th></tr></thead><tbody id="shipmentsTable"></tbody></table></div></div>
+    </section>
+
+    <section id="section-couriers" class="section-hidden">
+        <div class="panel"><div class="panel-header"><h3>🛵 إدارة المناديب</h3><button class="btn btn-primary" onclick="openCourierModal()">+ إضافة مندوب</button></div>
+        <div class="table-wrap"><table><thead><tr><th>اسم المندوب</th><th>الهاتف</th><th>الحالة</th><th>الشحنات</th><th>تم التسليم</th><th>جارية</th><th>مرفوضة</th><th>إجراءات</th></tr></thead><tbody id="couriersTable"></tbody></table></div></div>
+    </section>
+
+    <section id="section-routes" class="section-hidden">
+        <div class="panel"><div class="panel-header"><h3>🛣️ إدارة الخطوط</h3><div class="toolbar"><button class="btn btn-primary" onclick="openRouteModal()">+ إضافة خط</button><button class="btn btn-primary" onclick="saveAllRoutes()">💾 حفظ التعديلات</button></div></div>
+        <div class="table-wrap"><table><thead><tr><th>الخط</th><th>السعر الأساسي</th><th>الكيلو الإضافي</th><th>مدة التوصيل</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody id="routesTable"></tbody></table></div></div>
+    </section>
+
+    <section id="section-routes-report" class="section-hidden">
+        <div class="stats-grid" id="routesStatsGrid"></div>
+        <div class="panel"><div class="panel-header"><h3>📈 تقرير أرباح الخطوط</h3></div>
+        <div class="table-wrap"><table><thead><tr><th>الخط</th><th>السعر الأساسي</th><th>عدد الشحنات</th><th>جارية</th><th>جديدة</th><th>إجمالي الإيرادات</th><th>صافي الربح</th></tr></thead><tbody id="routesReportTable"></tbody><tfoot id="routesReportFooter"></tfoot></table></div></div>
+    </section>
+
+    <section id="section-messages" class="section-hidden">
+        <div class="panel"><div class="panel-header"><h3>💬 رسائل العملاء</h3></div>
+        <div class="table-wrap"><table><thead><tr><th>الاسم</th><th>الهاتف</th><th>الرسالة</th><th>التاريخ</th><th>إجراءات</th></tr></thead><tbody id="messagesTable"></tbody></table></div></div>
+    </section>
+
+    <section id="section-returns" class="section-hidden">
+        <div class="panel"><div class="panel-header"><h3>🔄 طلبات الإرجاع</h3></div>
+        <div class="table-wrap"><table><thead><tr><th>رقم الشحنة</th><th>العميل</th><th>المستخدم</th><th>السبب</th><th>السعر</th><th>الحالة</th><th>التاريخ</th><th>إجراءات</th></tr></thead><tbody id="returnsTable"></tbody></table></div></div>
+    </section>
+
+    <section id="section-payouts" class="section-hidden">
+        <div class="panel"><div class="panel-header"><h3>💰 المدفوعات للمناديب</h3><button class="btn btn-primary" onclick="document.getElementById('payoutForm').style.display='block'">+ إضافة دفعة</button></div>
+        <div style="padding:20px;display:none;" id="payoutForm">
+            <div class="form-row" style="margin-bottom:16px;">
+                <div class="form-group"><label>المندوب</label><select id="payoutCourier"></select></div>
+                <div class="form-group"><label>المبلغ (جنيه)</label><input type="number" id="payoutAmount" min="1" step="0.5"></div>
+            </div>
+            <div class="form-row"><div class="form-group"><label>ملاحظات</label><input type="text" id="payoutNotes" placeholder="سبب الدفعة..."></div><div class="form-group" style="display:flex;align-items:flex-end;"><button class="btn-submit" onclick="savePayout()" style="margin-top:0;">💰 تسجيل الدفعة</button></div></div>
+        </div>
+        <div class="table-wrap"><table><thead><tr><th>المندوب</th><th>المبلغ</th><th>الملاحظات</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody id="payoutsTableBody"></tbody></table></div></div>
+    </section>
+
+    <section id="section-commission" class="section-hidden">
+        <div class="panel" style="max-width:500px;margin:0 auto;"><div class="panel-header"><h3>💎 إعداد نسبة العمولة</h3></div>
+        <div style="padding:24px;"><div class="form-group"><label>نسبة العمولة (%)</label><input type="number" id="commissionPercent" min="0" max="100" value="20" style="width:100%;border:2px solid #e2e8f0;border-radius:10px;padding:14px;font-family:'Cairo',sans-serif;font-size:1.5rem;text-align:center;font-weight:900;"></div>
+        <button class="btn-submit" onclick="saveCommission()">💾 حفظ النسبة</button><p style="text-align:center;margin-top:16px;color:#8a97b0;">صافي الربح = سعر الشحن - العمولة</p></div></div>
+    </section>
+</main>
+
+<div class="modal-overlay" id="shipmentModal">
+    <div class="modal"><h3 id="shipmentModalTitle">📦 إضافة شحنة</h3>
+        <div class="form-row"><div class="form-group"><label>اسم المرسل</label><input type="text" id="shipSenderName"></div><div class="form-group"><label>هاتف المرسل</label><input type="tel" id="shipSenderPhone"></div></div>
+        <div class="form-row"><div class="form-group"><label>اسم المستلم</label><input type="text" id="shipCustName"></div><div class="form-group"><label>هاتف المستلم</label><input type="tel" id="shipCustPhone"></div></div>
+        <div class="form-row"><div class="form-group"><label>الخط</label><select id="shipRoute"></select></div><div class="form-group"><label>المندوب</label><select id="shipCourier"><option value="">اختر مندوباً</option></select></div></div>
+        <div class="form-row"><div class="form-group"><label>الوزن (كجم)</label><input type="number" id="shipWeight" value="1" step="0.1"></div><div class="form-group"><label>سعر الشحن (جنيه)</label><input type="number" id="shipPrice" value="0"></div></div>
+        <div class="form-row"><div class="form-group"><label>عنوان المرسل</label><input type="text" id="shipSenderAddr"></div><div class="form-group"><label>عنوان المستلم</label><input type="text" id="shipCustAddr"></div></div>
+        <div class="form-row"><div class="form-group"><label>الحجم</label><select id="shipSize"><option value="small">صغير</option><option value="medium" selected>متوسط</option><option value="large">كبير</option></select></div><div class="form-group"><label>ملاحظات</label><input type="text" id="shipNotes"></div></div>
+        <button class="btn-submit" onclick="saveShipment()">💾 حفظ الشحنة</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="courierModal">
+    <div class="modal"><h3 id="courierModalTitle">🛵 إضافة مندوب</h3>
+        <div class="form-row"><div class="form-group"><label>الاسم</label><input type="text" id="courierName"></div><div class="form-group"><label>الهاتف</label><input type="tel" id="courierPhone"></div></div>
+        <div class="form-row"><div class="form-group"><label>كلمة المرور</label><input type="password" id="courierPassword" placeholder="كلمة المرور (اترك فارغاً للافتراضي 123456)"></div><div class="form-group"><label>المركبة</label><select id="courierVehicle"><option value="motorcycle">دراجة نارية</option><option value="car">سيارة</option></select></div></div>
+        <div class="form-row"><div class="form-group"><label>الحالة</label><select id="courierStatus"><option value="available">متاح</option><option value="busy">مشغول</option></select></div><div></div></div>
+        <button class="btn-submit" onclick="saveCourier()">💾 حفظ</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="routeModal">
+    <div class="modal"><h3>🛣️ إضافة خط جديد</h3>
+        <div class="form-row"><div class="form-group"><label>اسم الخط</label><input type="text" id="routeName"></div><div class="form-group"><label>مدة التوصيل</label><input type="text" id="routeTime" placeholder="24 ساعة"></div></div>
+        <div class="form-row"><div class="form-group"><label>السعر الأساسي</label><input type="number" id="routeBase" value="0"></div><div class="form-group"><label>الكيلو الإضافي</label><input type="number" id="routeExtra" value="0"></div></div>
+        <button class="btn-submit" onclick="saveRoute()">💾 حفظ</button>
+    </div>
+</div>
+
+<script src="js/sound.js"></script>
+<script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');</script>
+<script src="js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شحناتي | كينج شيبنج</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a1628">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #0a1628; --navy-mid: #0f2044; --navy-light: #1a2d50;
+            --blue: #1a3a6b; --blue-light: #3b82f6; --blue-tint: #eff6ff;
+            --gold: #f5a623; --gold-light: #ffd06b; --gold-pale: #fff5dc; --gold-dark: #d4890a;
+            --white: #ffffff; --gray-light: #f4f6fb; --gray-mid: #e2e8f0;
+            --gray: #8a97b0; --gray-dark: #64748b;
+            --text: #1c2b4b; --text-muted: #94a3b8;
+            --success: #22c55e; --success-light: #dcfce7; --success-dark: #166534;
+            --warning: #f59e0b; --warning-light: #fef3c7; --warning-dark: #92400e;
+            --danger: #ef4444; --danger-light: #fee2e2; --danger-dark: #991b1b;
+            --radius: 14px; --radius-lg: 20px; --radius-sm: 8px; --radius-full: 9999px;
+            --shadow: 0 8px 32px rgba(10,22,40,0.13);
+            --shadow-lg: 0 20px 60px rgba(10,22,40,0.2);
+            --shadow-sm: 0 2px 8px rgba(10,22,40,0.06);
+            --glass: rgba(255,255,255,0.08);
+            --font-main: 'Cairo', 'Tajawal', sans-serif;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: var(--font-main); background: #f0f4fe; color: var(--text); direction: rtl; min-height: 100vh; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--gray-mid); border-radius: 3px; }
+
+        @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        .header { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 50%, var(--blue) 100%); color: white; padding: 0 24px; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .header-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; height: 68px; }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .header-logo { width: 38px; height: 38px; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; box-shadow: 0 4px 12px rgba(245,166,35,0.3); flex-shrink: 0; }
+        .header h2 { font-size: 1.05rem; font-weight: 800; }
+        .header-actions { display: flex; gap: 8px; align-items: center; }
+        .header-actions a, .header-actions button { background: rgba(255,255,255,0.08); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 10px; cursor: pointer; font-family: var(--font-main); font-size: 0.82rem; text-decoration: none; transition: all 0.25s; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
+        .header-actions a:hover, .header-actions button:hover { background: rgba(245,166,35,0.15); border-color: rgba(245,166,35,0.3); transform: translateY(-1px); }
+        .header-actions .home-link { background: rgba(245,166,35,0.12); border-color: rgba(245,166,35,0.2); }
+        .snd-btn { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); width: 34px; height: 34px; border-radius: 50%; cursor: pointer; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; transition: all 0.25s; flex-shrink: 0; padding: 0; }
+        .snd-btn:hover { background: rgba(245,166,35,0.12); border-color: rgba(245,166,35,0.2); color: var(--gold); }
+        .snd-btn.muted { opacity: 0.4; }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: -28px auto 28px; padding: 0 20px; max-width: 1100px; position: relative; z-index: 10; }
+        .stat-card { background: white; border-radius: var(--radius); padding: 20px; text-align: center; box-shadow: 0 4px 20px rgba(10,22,40,0.06); border: 1px solid rgba(59,130,246,0.06); animation: fadeUp 0.5s ease both; transition: all 0.3s; cursor: default; }
+        .stat-card:nth-child(1) { animation-delay: 0.05s; }
+        .stat-card:nth-child(2) { animation-delay: 0.1s; }
+        .stat-card:nth-child(3) { animation-delay: 0.15s; }
+        .stat-card:nth-child(4) { animation-delay: 0.2s; }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+        .stat-card .num { font-size: 1.8rem; font-weight: 900; line-height: 1.2; }
+        .stat-card .lbl { font-size: 0.78rem; color: var(--gray); margin-top: 4px; font-weight: 600; }
+        .stat-card .trend { font-size: 0.7rem; margin-top: 2px; font-weight: 700; display: inline-flex; align-items: center; gap: 3px; }
+
+        .panel { background: white; border-radius: var(--radius-lg); box-shadow: 0 2px 16px rgba(10,22,40,0.04); padding: 28px; margin-bottom: 24px; border: 1px solid rgba(59,130,246,0.05); animation: fadeUp 0.5s 0.2s ease both; }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+        .panel-header h3 { font-size: 1.1rem; font-weight: 800; color: var(--navy); display: flex; align-items: center; gap: 8px; }
+        .panel-badge { background: var(--blue-tint); color: var(--blue-light); font-size: 0.75rem; font-weight: 700; padding: 3px 10px; border-radius: var(--radius-full); }
+
+        .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--gray-light); }
+        table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        th { background: linear-gradient(135deg, var(--navy), var(--navy-mid)); color: white; padding: 14px 16px; font-size: 0.78rem; font-weight: 700; text-align: right; white-space: nowrap; letter-spacing: 0.5px; }
+        td { padding: 14px 16px; font-size: 0.85rem; border-bottom: 1px solid var(--gray-light); color: var(--text); transition: background 0.2s; }
+        tbody tr { transition: all 0.2s; }
+        tbody tr:hover { background: var(--blue-tint); }
+        tbody tr:last-child td { border-bottom: none; }
+
+        .tracking-code { font-family: 'Courier New', monospace; font-size: 0.9rem; font-weight: 900; color: var(--gold); background: var(--navy); padding: 4px 10px; border-radius: 6px; letter-spacing: 1px; cursor: pointer; transition: all 0.2s; display: inline-block; user-select: all; }
+        .tracking-code:hover { background: #111d35; transform: scale(1.02); }
+
+        .badge { padding: 4px 12px; border-radius: var(--radius-full); font-size: 0.73rem; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+        .badge-new { background: #dbeafe; color: #1e40af; }
+        .badge-transit { background: var(--warning-light); color: var(--warning-dark); }
+        .badge-done { background: var(--success-light); color: var(--success-dark); }
+        .badge-rejected { background: var(--danger-light); color: var(--danger-dark); }
+        .badge-pending { background: var(--warning-light); color: var(--warning-dark); }
+        .badge-approved { background: var(--success-light); color: var(--success-dark); }
+        .badge-received { background: var(--blue-tint); color: var(--blue); }
+
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 6px; }
+        .status-dot.new { background: var(--blue-light); }
+        .status-dot.transit { background: var(--warning); animation: pulse 1.5s infinite; }
+        .status-dot.done { background: var(--success); }
+        .status-dot.rejected { background: var(--danger); }
+
+        .empty-state { text-align: center; padding: 60px 20px; }
+        .empty-state .icon { font-size: 4rem; display: block; margin-bottom: 12px; }
+        .empty-state h4 { font-size: 1.1rem; color: var(--navy); font-weight: 800; margin-bottom: 6px; }
+        .empty-state p { color: var(--gray); font-size: 0.88rem; }
+
+        .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+        .btn-xs { padding: 6px 12px; border-radius: 8px; font-family: var(--font-main); font-size: 0.73rem; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; }
+        .btn-xs:hover { transform: translateY(-1px); }
+        .btn-return { background: var(--warning-light); color: var(--warning-dark); }
+        .btn-return:hover { background: #fde68a; }
+        .btn-invoice { background: #ede9fe; color: #6b21a8; }
+        .btn-invoice:hover { background: #ddd6fe; }
+        .btn-copy { background: var(--blue-tint); color: var(--blue); }
+        .btn-copy:hover { background: #dbeafe; }
+
+        .toast-container { position: fixed; top: 84px; left: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { background: var(--navy); color: white; padding: 16px 20px; border-radius: 14px; box-shadow: 0 12px 40px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 14px; animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: auto; cursor: pointer; border-right: 4px solid var(--gold); max-width: 420px; }
+        .toast .t-icon { font-size: 1.5rem; flex-shrink: 0; }
+        .toast .t-body { flex: 1; }
+        .toast .t-title { font-weight: 900; font-size: 0.9rem; }
+        .toast .t-desc { font-size: 0.8rem; opacity: 0.7; margin-top: 2px; }
+        .toast .t-close { background: rgba(255,255,255,0.1); border: none; color: white; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.2s; }
+        .toast .t-close:hover { background: rgba(255,255,255,0.2); }
+
+        .skeleton { background: linear-gradient(90deg, var(--gray-light) 25%, #e8ecf4 50%, var(--gray-light) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
+
+        @media (max-width: 768px) {
+            .stats-row { grid-template-columns: 1fr 1fr; margin-top: -32px; gap: 10px; }
+            .stat-card { padding: 14px; }
+            .stat-card .num { font-size: 1.4rem; }
+            .header { padding: 0 16px; }
+            .header-inner { height: 60px; }
+            .header-actions a, .header-actions button { padding: 6px 12px; font-size: 0.75rem; }
+            .panel { padding: 20px 16px; }
+            .container { padding: 0 12px; }
+            th, td { padding: 10px 12px; font-size: 0.78rem; }
+            .tracking-code { font-size: 0.78rem; padding: 3px 8px; }
+            .empty-state { padding: 40px 16px; }
+        }
+        @media (max-width: 480px) {
+            .stats-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .stat-card .num { font-size: 1.2rem; }
+            .panel-header { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-inner">
+            <div class="header-left">
+                <div class="header-logo">👑</div>
+                <h2><span id="userName">المستخدم</span></h2>
+            </div>
+            <div class="header-actions">
+                <button class="snd-btn" id="soundToggle" onclick="SoundManager.toggle();this.classList.toggle('muted');" title="الصوت">🔊</button>
+                <a href="index" class="home-link">🏠 الرئيسية</a>
+                <button onclick="logout()">🚪 خروج</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-row" id="statsMini"></div>
+
+    <div class="container">
+        <div class="panel">
+            <div class="panel-header">
+                <h3>📦 شحناتي <span class="panel-badge" id="shipmentCount">0</span></h3>
+            </div>
+            <div id="shipmentsList"></div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                <h3>🔄 طلبات الإرجاع</h3>
+            </div>
+            <div id="returnsList"></div>
+        </div>
+    </div>
+
+    <script>
+        var token = localStorage.getItem('userToken');
+        var userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        if (!token) window.location.href = 'user-login';
+        document.getElementById('userName').textContent = userData.name || 'المستخدم';
+
+        function showToast(title, desc, icon, duration) {
+            var container = document.getElementById('toastContainer');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toastContainer';
+                container.className = 'toast-container';
+                document.body.appendChild(container);
+            }
+            var toast = document.createElement('div');
+            toast.className = 'toast';
+            var closeBtn = document.createElement('button');
+            closeBtn.className = 't-close';
+            closeBtn.textContent = '✕';
+            closeBtn.onclick = function() { toast.remove(); };
+            toast.innerHTML = '<span class="t-icon">' + (icon || '🔔') + '</span><div class="t-body"><div class="t-title">' + title + '</div>' + (desc ? '<div class="t-desc">' + desc + '</div>' : '') + '</div>';
+            toast.appendChild(closeBtn);
+            container.appendChild(toast);
+            setTimeout(function() { if (toast.parentElement) toast.remove(); }, duration || 5000);
+            if (typeof SoundManager !== 'undefined') {
+                if (icon === '📦' || icon === '🎉') SoundManager.newShipment();
+                else if (icon === '❌') SoundManager.error();
+                else if (icon === '⚠️') SoundManager.warning();
+                else if (icon === '✅') SoundManager.success();
+                else if (icon === '🔔') SoundManager.notification();
+            }
+        }
+        var previousShipmentCount = 0;
+
+        async function api(url, options) {
+            options = options || {};
+            var headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token };
+            if (options.headers) { for (var k in options.headers) headers[k] = options.headers[k]; }
+            try {
+                var res = await fetch(url, { method: options.method || 'GET', headers: headers, body: options.body });
+                if (res.status === 401 || res.status === 403) { localStorage.clear(); window.location.href = 'user-login'; return null; }
+                return res.json();
+            } catch (e) { return null; }
+        }
+
+        async function loadShipments() {
+            try {
+                var data = await api('/api/user/shipments');
+                var shipments = data.data || [];
+                var sl = { new: 'جديدة', transit: 'قيد التوصيل', done: 'تم التسليم', rejected: 'مرفوضة' };
+                var sb = { new: 'badge-new', transit: 'badge-transit', done: 'badge-done', rejected: 'badge-rejected' };
+                var sd = { new: 'new', transit: 'transit', done: 'done', rejected: 'rejected' };
+
+                if (shipments.length > previousShipmentCount && previousShipmentCount > 0) {
+                    var ns = shipments[0];
+                    if (typeof SoundManager !== 'undefined') SoundManager.newShipment();
+                    showToast('🎉 شحنة جديدة!', '📦 كود التتبع: ' + ns.tracking_number, '📦', 8000);
+                }
+                previousShipmentCount = shipments.length;
+
+                var total = shipments.length,
+                    done = shipments.filter(function(s) { return s.status === 'done'; }).length,
+                    transit = shipments.filter(function(s) { return s.status === 'transit'; }).length,
+                    pending = shipments.filter(function(s) { return s.status === 'new'; }).length,
+                    rejected = shipments.filter(function(s) { return s.status === 'rejected'; }).length;
+
+                document.getElementById('statsMini').innerHTML =
+                    '<div class="stat-card"><div class="num" style="color:var(--navy);">' + total + '</div><div class="lbl">إجمالي الشحنات</div></div>' +
+                    '<div class="stat-card"><div class="num" style="color:var(--blue-light);">' + pending + '</div><div class="lbl">جديدة</div></div>' +
+                    '<div class="stat-card"><div class="num" style="color:var(--warning);">' + transit + '</div><div class="lbl">قيد التوصيل</div></div>' +
+                    '<div class="stat-card"><div class="num" style="color:var(--success);">' + done + '</div><div class="lbl">تم التسليم</div></div>';
+
+                document.getElementById('shipmentCount').textContent = total;
+
+                if (shipments.length === 0) {
+                    document.getElementById('shipmentsList').innerHTML =
+                        '<div class="empty-state"><span class="icon">📭</span><h4>لا توجد شحنات بعد</h4><p>عندما تقوم بإنشاء شحنة جديدة، ستظهر هنا</p></div>';
+                    return;
+                }
+
+                document.getElementById('shipmentsList').innerHTML =
+                    '<div class="table-wrap"><table><thead><tr><th>كود التتبع</th><th>المستلم</th><th>الخط</th><th>الوزن</th><th>السعر</th><th>الحالة</th><th>المندوب</th><th>التاريخ</th><th>إجراءات</th></tr></thead><tbody>' +
+                    shipments.map(function(s) {
+                        var dateStr = '';
+                        try { dateStr = new Date(s.created_at).toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' }); } catch(e) { dateStr = s.created_at || '—'; }
+                        return '<tr>' +
+                            '<td><span class="tracking-code" onclick="copyTracking(\'' + s.tracking_number + '\')">' + s.tracking_number + '</span></td>' +
+                            '<td><strong>' + s.customer_name + '</strong><br><span style="color:var(--gray);font-size:0.75rem;">' + s.customer_phone + '</span></td>' +
+                            '<td>' + (s.route_name || '—') + '</td>' +
+                            '<td>' + (s.weight || 1) + ' كجم</td>' +
+                            '<td><strong style="color:var(--navy);">' + (s.shipping_price || 0) + ' ج</strong></td>' +
+                            '<td><span class="badge ' + sb[s.status] + '"><span class="status-dot ' + sd[s.status] + '"></span>' + sl[s.status] + '</span></td>' +
+                            '<td>' + (s.courier_name || '—') + '</td>' +
+                            '<td style="font-size:0.8rem;color:var(--gray);">' + dateStr + '</td>' +
+                            '<td><div class="actions">' +
+                            (s.status === 'done' ? '<button class="btn-xs btn-return" onclick="requestReturn(' + s.id + ')">🔄 استرجاع</button>' : '') +
+                            '<button class="btn-xs btn-invoice" onclick="printInvoice(' + s.id + ')">🧾 فاتورة</button>' +
+                            '</div></td></tr>';
+                    }).join('') + '</tbody></table></div>';
+            } catch (err) {}
+        }
+
+        async function loadReturns() {
+            try {
+                var data = await api('/api/user/returns');
+                var returns = data.data || [];
+                var sl = { pending: '⏳ قيد المراجعة', approved: '✅ تم القبول', rejected: '❌ تم الرفض', received: '📦 تم الاستلام' };
+                var sb = { pending: 'badge-pending', approved: 'badge-approved', rejected: 'badge-rejected', received: 'badge-received' };
+                document.getElementById('returnsList').innerHTML = returns.length === 0
+                    ? '<div class="empty-state"><span class="icon">📭</span><h4>لا توجد طلبات إرجاع</h4><p>يمكنك طلب إرجاع أي شحنة تم تسليمها</p></div>'
+                    : '<div class="table-wrap"><table><thead><tr><th>رقم الشحنة</th><th>العميل</th><th>السبب</th><th>الحالة</th><th>التاريخ</th></tr></thead><tbody>' +
+                    returns.map(function(r) {
+                        var dateStr = '';
+                        try { dateStr = new Date(r.created_at).toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' }); } catch(e) { dateStr = r.created_at || '—'; }
+                        return '<tr><td><strong>' + r.tracking_number + '</strong></td><td>' + r.customer_name + '</td><td>' + r.reason + '</td><td><span class="badge ' + sb[r.status] + '">' + sl[r.status] + '</span></td><td style="font-size:0.8rem;color:var(--gray);">' + dateStr + '</td></tr>';
+                    }).join('') + '</tbody></table></div>';
+            } catch (err) {}
+        }
+
+        function copyTracking(code) {
+            navigator.clipboard.writeText(code).then(function() {
+                showToast('✅ تم النسخ', 'كود التتبع: ' + code, '📋', 3000);
+            }).catch(function() {
+                showToast('📋 كود التتبع', code, '📋', 3000);
+            });
+        }
+
+        async function requestReturn(shipmentId) {
+            var reason = prompt('📝 سبب الإرجاع:');
+            if (!reason) return;
+            try {
+                var res = await api('/api/returns', { method: 'POST', body: JSON.stringify({ shipmentId: shipmentId, reason: reason }) });
+                var data = await res.json();
+                if (data.success) {
+                    showToast('✅ تم الإرجاع', 'تم إرسال طلب الإرجاع بنجاح', '✅');
+                    loadReturns();
+                } else {
+                    showToast('❌ خطأ', data.error || 'حدث خطأ', '❌');
+                }
+            } catch (err) {
+                showToast('❌ خطأ', 'تعذر الاتصال بالخادم', '❌');
+            }
+        }
+
+        async function printInvoice(id) {
+            try {
+                var d = await api('/api/shipments/' + id);
+                var s = (d && d.data) ? d.data : d;
+                if (!s) return;
+                var sl = { new: 'جديدة', transit: 'قيد التوصيل', done: 'تم التسليم', rejected: 'مرفوضة' };
+                var dt = new Date(s.created_at).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
+                var inv = 'INV-' + s.tracking_number,
+                    sub = s.shipping_price || 0,
+                    comm = s.commission_amount || 0,
+                    tot = s.net_profit || 0;
+                var win = window.open('', '_blank', 'width=800,height=900');
+                win.document.write('<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>فاتورة ' + inv + '</title><style>@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap");*{margin:0;padding:0;}body{font-family:Cairo,sans-serif;padding:40px;direction:rtl;color:#1a1a1a;}.c{max-width:800px;margin:0 auto;border:2px solid #0a1628;border-radius:12px;overflow:hidden;}.h{background:linear-gradient(135deg,#0a1628,#1a3a6b);color:white;padding:30px;display:flex;justify-content:space-between;}.h h1{font-size:1.8rem;font-weight:900;}.h .en{color:#f5a623;font-size:0.8rem;}.b{padding:30px;}.g{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:30px;}.box{border:1px solid #e2e8f0;border-radius:10px;padding:20px;}.box h4{color:#0a1628;margin-bottom:12px;border-bottom:2px solid #f5a623;padding-bottom:8px;}table{width:100%;border-collapse:collapse;margin-bottom:30px;}th{background:#0a1628;color:white;padding:14px 16px;text-align:right;}td{padding:14px 16px;border-bottom:1px solid #e2e8f0;}.tot{margin-right:auto;max-width:350px;}.tot .r{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #e2e8f0;}.tot .r.t{font-size:1.2rem;font-weight:900;color:#0a1628;border-bottom:none;border-top:3px solid #0a1628;padding-top:16px;margin-top:8px;}.tot .r label{color:#8a97b0;}.f{background:#f4f6fb;padding:20px 30px;text-align:center;font-size:0.8rem;color:#8a97b0;border-top:1px solid #e2e8f0;}.trk{text-align:center;background:#f4f6fb;padding:16px;border-radius:10px;margin-bottom:24px;border:1px dashed #0a1628;}.trk .num{font-family:monospace;font-size:1.5rem;font-weight:900;color:#f5a623;background:#0a1628;padding:8px 20px;border-radius:8px;letter-spacing:2px;display:inline-block;}@media print{body{padding:0;}.c{border:none;}}</style></head><body><div class="c"><div class="h"><div><h1>👑 كينج شيبنج</h1><div class="en">KING SHIPPING</div></div><div><h2 style="color:#f5a623;">فاتورة شحن</h2><div style="font-size:0.75rem;opacity:0.6;">' + dt + '</div></div></div><div class="b"><div class="trk"><div style="font-size:0.8rem;color:#8a97b0;margin-bottom:6px;">كود التتبع</div><div class="num">' + s.tracking_number + '</div></div><div class="g"><div class="box"><h4>📤 بيانات المرسل</h4><p style="margin-bottom:4px;"><strong>' + (s.sender_name || '') + '</strong></p><p style="color:#8a97b0;font-size:0.85rem;">' + (s.sender_phone || '') + '</p></div><div class="box"><h4>📥 بيانات المستلم</h4><p style="margin-bottom:4px;"><strong>' + s.customer_name + '</strong></p><p style="color:#8a97b0;font-size:0.85rem;">' + s.customer_phone + '</p></div></div><table><thead><tr><th>البيان</th><th>القيمة</th></tr></thead><tbody><tr><td>الخط</td><td>' + (s.route_name || '—') + '</td></tr><tr><td>الوزن</td><td>' + (s.weight || 1) + ' كجم</td></tr><tr><td>الحالة</td><td>' + (sl[s.status] || s.status) + '</td></tr></tbody></table><div class="tot"><div class="r"><label>اجمالي الشحن</label><span>' + sub + ' ج</span></div><div class="r"><label>العمولة</label><span>' + comm + ' ج</span></div><div class="r t"><label>الصافي</label><span>' + tot + ' ج</span></div></div></div><div class="f">شكراً لثقتكم في كينج شيبنج | جميع الحقوق محفوظة © 2026</div></div></body></html>');
+                win.document.close();
+            } catch (err) {}
+        }
+
+        function logout() {
+            localStorage.removeItem('userToken');
+            localStorage.removeItem('userData');
+            window.location.href = 'index';
+        }
+        loadShipments();
+        loadReturns();
+        window._ri = setInterval(function() { loadShipments(); loadReturns(); }, 3000);
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) clearInterval(window._ri);
+            else { loadShipments(); loadReturns(); window._ri = setInterval(function() { loadShipments(); loadReturns(); }, 3000); }
+        });
+    </script>
+    <script src="js/sound.js"></script>
+    <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');</script>
+</body>
+</html>

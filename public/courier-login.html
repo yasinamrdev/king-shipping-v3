@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل دخول المندوب | كينج شيبنج</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a1628">
+    <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Cairo', 'Tajawal', sans-serif; background: linear-gradient(160deg, #0a1628 0%, #0f2044 40%, #1a3a6b 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .card { background: white; border-radius: 20px; padding: 40px; width: 100%; max-width: 440px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); text-align: center; }
+        .card h1 { font-size: 1.5rem; font-weight: 900; color: #0a1628; margin-bottom: 24px; }
+        .form-group { margin-bottom: 16px; text-align: right; }
+        .form-group label { display: block; font-size: 0.88rem; font-weight: 700; color: #0a1628; margin-bottom: 6px; }
+        .form-group input { width: 100%; border: 2px solid #e2e8f0; border-radius: 10px; padding: 13px; font-family: 'Cairo', 'Tajawal', sans-serif; font-size: 0.95rem; transition: all 0.25s; }
+        .form-group input:focus { border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59,130,246,0.1); outline: none; }
+        .btn { width: 100%; background: linear-gradient(135deg, #3b82f6, #1a3a6b); color: white; border: none; padding: 14px; border-radius: 10px; font-family: 'Cairo', 'Tajawal', sans-serif; font-size: 1.05rem; font-weight: 800; cursor: pointer; transition: all 0.25s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(59,130,246,0.3); }
+        .error { background: #fee2e2; color: #991b1b; padding: 12px; border-radius: 10px; font-size: 0.88rem; display: none; margin-bottom: 16px; }
+        .error.show { display: block; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🛵 دخول المندوب</h1>
+        <div class="error" id="error"></div>
+        <form onsubmit="login(event)">
+            <div class="form-group"><label>رقم الهاتف</label><input type="tel" id="phone" placeholder="01xxxxxxxxx" required></div>
+            <div class="form-group"><label>كلمة المرور</label><input type="password" id="password" placeholder="كلمة المرور" required></div>
+            <button type="submit" class="btn">🔐 دخول</button>
+        </form>
+        <p style="margin-top:16px;font-size:0.85rem;color:#8a97b0;"><a href="index.html" style="color:#f5a623;text-decoration:none;font-weight:700;">🏠 العودة للرئيسية</a></p>
+    </div>
+    <script>
+        async function login(e) {
+            e.preventDefault();
+            const phone = document.getElementById('phone').value.trim();
+            const password = document.getElementById('password').value;
+            const errorEl = document.getElementById('error');
+            errorEl.classList.remove('show');
+            if (!phone || !password) { errorEl.textContent = 'يرجى ملء جميع الحقول'; errorEl.classList.add('show'); return; }
+            try {
+                const res = await fetch('/api/courier/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone, password }) });
+                const data = await res.json();
+                if (res.ok) { localStorage.setItem('courierToken', data.token); localStorage.setItem('courierData', JSON.stringify(data.courier)); window.location.href = 'courier.html'; }
+                else { errorEl.textContent = data.error; errorEl.classList.add('show'); }
+            } catch (err) { errorEl.textContent = 'تعذر الاتصال'; errorEl.classList.add('show'); }
+        }
+    </script>
+</body>
+</html>
